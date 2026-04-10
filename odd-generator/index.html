@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ODD GENERATOR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --fg: #f0f0f0;
+            --accent: #ff3333;
+            --border: 2px solid var(--fg);
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-sans: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            padding: 1rem;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+        }
+
+        .mode-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover,
+        .mode-btn.active {
+            background: var(--fg);
+            color: var(--bg);
+        }
+
+        .input-section {
+            border: var(--border);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            font-family: var(--font-mono);
+            padding: 0.75rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        textarea::placeholder {
+            opacity: 0.5;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            border: 1px solid var(--fg);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .file-label:hover {
+            background: var(--fg);
+            color: var(--bg);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: var(--fg);
+            color: var(--bg);
+            border: none;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: transform 0.1s;
+        }
+
+        .generate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .output-section {
+            border: var(--border);
+            padding: 2rem 1rem;
+            margin-bottom: 1.5rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .output-text {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 120px;
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            padding: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            background: var(--fg);
+            color: var(--bg);
+        }
+
+        .memory-section {
+            border-top: var(--border);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .memory-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .memory-item {
+            border: 1px solid var(--fg);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .memory-text {
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 1rem 0;
+            display: none;
+            border: 1px solid var(--fg);
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        .status {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .mode-selector {
+                gap: 0.25rem;
+            }
+
+            .mode-btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.65rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ODD GENERATOR</h1>
+            <p style="font-size: 0.75rem; opacity: 0.7; margin-top: 0.5rem;">BRUTALIST VERSE MACHINE</p>
+        </header>
+
+        <div class="mode-selector" id="modeSelector"></div>
+
+        <div class="input-section">
+            <textarea id="textInput" placeholder="ENTER TEXT OR LEAVE BLANK FOR PURE CHAOS..."></textarea>
+            
+            <label class="file-label">
+                📷 IMAGE INPUT
+                <input type="file" id="imageInput" accept="image/*">
+            </label>
+            <span id="fileName" style="font-size: 0.7rem; opacity: 0.7;"></span>
+            
+            <img id="imagePreview" class="image-preview" alt="Preview">
+        </div>
+
+        <button class="generate-btn" id="generateBtn">⚡ GENERATE ODDNESS</button>
+
+        <div class="output-section">
+            <p class="output-text" id="outputText">AWAITING INPUT...</p>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" id="randomizeBtn">🎲 RANDOM MODE</button>
+            <button class="action-btn" id="saveBtn">💾 SAVE</button>
+            <button class="action-btn" id="shareBtn">📤 SHARE</button>
+            <button class="action-btn" id="copyBtn">📋 COPY</button>
+        </div>
+
+        <div class="memory-section">
+            <h2 style="font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase;">Saved Memories</h2>
+            <ul class="memory-list" id="memoryList"></ul>
+            <p class="status" id="status"></p>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentMode = 'vague_monotone';
+        let promptsData = null;
+        let savedMemories = JSON.parse(localStorage.getItem('oddMemories') || '[]');
+
+        // DOM elements
+        const modeSelector = document.getElementById('modeSelector');
+        const textInput = document.getElementById('textInput');
+        const imageInput = document.getElementById('imageInput');
+        const fileName = document.getElementById('fileName');
+        const imagePreview = document.getElementById('imagePreview');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputText = document.getElementById('outputText');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const memoryList = document.getElementById('memoryList');
+        const status = document.getElementById('status');
+
+        // Load prompts configuration
+        async function loadPrompts() {
+            try {
+                const response = await fetch('prompts.json');
+                promptsData = await response.json();
+                initializeModes();
+                renderMemories();
+            } catch (error) {
+                console.error('Error loading prompts:', error);
+                outputText.textContent = 'ERROR: COULD NOT LOAD PROMPTS.JSON';
+            }
+        }
+
+        // Initialize mode buttons
+        function initializeModes() {
+            if (!promptsData || !promptsData.modes) return;
+
+            modeSelector.innerHTML = '';
+            Object.entries(promptsData.modes).forEach(([key, mode]) => {
+                const btn = document.createElement('button');
+                btn.className = `mode-btn ${key === currentMode ? 'active' : ''}`;
+                btn.textContent = mode.name;
+                btn.onclick = () => setMode(key);
+                modeSelector.appendChild(btn);
+            });
+        }
+
+        // Set active mode
+        function setMode(modeKey) {
+            currentMode = modeKey;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === promptsData.modes[modeKey].name);
+            });
+            showStatus(`MODE: ${promptsData.modes[modeKey].name.toUpperCase()}`);
+        }
+
+        // Random mode selector
+        function randomizeMode() {
+            const modes = Object.keys(promptsData.modes);
+            const randomMode = modes[Math.floor(Math.random() * modes.length)];
+            setMode(randomMode);
+        }
+
+        // Extract text from image (simple OCR simulation using image metadata)
+        async function extractImageText(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.add('show');
+                    
+                    // Generate pseudo-text from image properties
+                    const pseudoText = `IMAGE: ${file.name} (${Math.round(file.size/1024)}KB) - ${new Date().toLocaleTimeString()}`;
+                    resolve(pseudoText);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Generate odd output
+        function generateOutput(inputText = '') {
+            if (!promptsData) return;
+
+            const mode = promptsData.modes[currentMode];
+            const numSentences = Math.floor(Math.random() * 
+                (promptsData.settings.max_sentences - promptsData.settings.min_sentences + 1)) 
+                + promptsData.settings.min_sentences;
+
+            let outputs = [];
+
+            for (let i = 0; i < numSentences; i++) {
+                const prefix = mode.prefixes[Math.floor(Math.random() * mode.prefixes.length)];
+                const middle = mode.middles[Math.floor(Math.random() * mode.middles.length)];
+                const suffix = mode.suffixes[Math.floor(Math.random() * mode.suffixes.length)];
+                
+                // Occasionally incorporate corpus or input
+                let sentence = `${prefix} ${middle}`;
+                
+                if (Math.random() > 0.7 && promptsData.corpus) {
+                    const corpusType = Math.random() > 0.5 ? 'free_verse_fragments' : 'idiom_adjacent';
+                    const corpus = promptsData.corpus[corpusType];
+                    if (corpus && corpus.length > 0) {
+                        const fragment = corpus[Math.floor(Math.random() * corpus.length)];
+                        sentence += `, ${fragment}`;
+                    }
+                }
+                
+                if (Math.random() > 0.8 && inputText.trim()) {
+                    const words = inputText.trim().split(/\s+/);
+                    if (words.length > 0) {
+                        const randomWord = words[Math.floor(Math.random() * words.length)];
+                        sentence += ` [${randomWord}]`;
+                    }
+                }
+                
+                sentence += ` ${suffix}`;
+                outputs.push(sentence);
+            }
+
+            return outputs.join('. ') + '.';
+        }
+
+        // Main generation handler
+        async function handleGenerate() {
+            let inputText = textInput.value.trim();
+            
+            if (imageInput.files[0]) {
+                const imageText = await extractImageText(imageInput.files[0]);
+                inputText = inputText ? `${inputText} ${imageText}` : imageText;
+            }
+
+            const output = generateOutput(inputText);
+            outputText.textContent = output;
+            showStatus('GENERATED');
+        }
+
+        // Save to memory
+        function saveToMemory() {
+            const text = outputText.textContent;
+            if (text && text !== 'AWAITING INPUT...' && text !== 'ERROR: COULD NOT LOAD PROMPTS.JSON') {
+                const memory = {
+                    id: Date.now(),
+                    text: text,
+                    mode: currentMode,
+                    timestamp: new Date().toISOString()
+                };
+                savedMemories.unshift(memory);
+                localStorage.setItem('oddMemories', JSON.stringify(savedMemories));
+                renderMemories();
+                showStatus('SAVED TO MEMORY');
+            }
+        }
+
+        // Render memories
+        function renderMemories() {
+            memoryList.innerHTML = '';
+            savedMemories.forEach(memory => {
+                const li = document.createElement('li');
+                li.className = 'memory-item';
+                li.innerHTML = `
+                    <span class="memory-text">${escapeHtml(memory.text)}</span>
+                    <button class="delete-btn" onclick="deleteMemory(${memory.id})">✕</button>
+                `;
+                memoryList.appendChild(li);
+            });
+        }
+
+        // Delete memory
+        window.deleteMemory = function(id) {
+            savedMemories = savedMemories.filter(m => m.id !== id);
+            localStorage.setItem('oddMemories', JSON.stringify(savedMemories));
+            renderMemories();
+            showStatus('DELETED');
+        };
+
+        // Share functionality
+        async function shareOutput() {
+            const text = outputText.textContent;
+            if (!text || text === 'AWAITING INPUT...') return;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'ODD GENERATOR',
+                        text: text,
+                        url: window.location.href
+                    });
+                    showStatus('SHARED');
+                } catch (err) {
+                    console.log('Share cancelled');
+                }
+            } else {
+                copyToClipboard();
+            }
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const text = outputText.textContent;
+            if (!text || text === 'AWAITING INPUT...') return;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('COPIED TO CLIPBOARD');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showStatus('COPIED TO CLIPBOARD');
+            });
+        }
+
+        // Show status message
+        function showStatus(message) {
+            status.textContent = `${message} - ${new Date().toLocaleTimeString()}`;
+            setTimeout(() => {
+                if (status.textContent.includes(message)) {
+                    status.textContent = '';
+                }
+            }, 3000);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', handleGenerate);
+        randomizeBtn.addEventListener('click', randomizeMode);
+        saveBtn.addEventListener('click', saveToMemory);
+        shareBtn.addEventListener('click', shareOutput);
+        copyBtn.addEventListener('click', copyToClipboard);
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+            } else {
+                fileName.textContent = '';
+                imagePreview.classList.remove('show');
+            }
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                handleGenerate();
+            }
+        });
+
+        // Initialize
+        loadPrompts();
+    </script>
+</body>
+</html>
