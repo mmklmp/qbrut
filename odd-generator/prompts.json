@@ -1,0 +1,67 @@
+{
+  "modes": {
+    "vague_monotone": {
+      "name": "Vague Monotone",
+      "description": "Flat, indifferent statements that could mean anything",
+      "prefixes": ["it is what it is", "something something", "whatever happens", "the thing about things"],
+      "middles": ["doesn't really matter", "is neither here nor there", "continues regardless", "remains uncommitted"],
+      "suffixes": ["i suppose", "apparently", "so they say", "or not"]
+    },
+    "fever_dream_log": {
+      "name": "Fever Dream Log",
+      "description": "Surreal, disjointed imagery from a sleeping brain",
+      "prefixes": ["the ceiling melted into", "i dreamed of", "swimming through", "eating memories of"],
+      "middles": ["clockwork oranges", "forgotten Tuesdays", "electric sheep counting themselves", "whispers in reverse"],
+      "suffixes": ["until morning forgot me", "in the space between blinks", "where gravity is optional", "tasting like static"]
+    },
+    "lyrical_entropy": {
+      "name": "Lyrical Entropy",
+      "description": "Poetic decay and beautiful disorder",
+      "prefixes": ["rust blooms on", "the silence between", "fractured light bends around", "time forgets to"],
+      "middles": ["broken compasses", "unwritten letters", "almost-remembered names", "half-caught breaths"],
+      "suffixes": ["and nothing holds", "in slow collapse", "beautifully wrong", "like rain upward"]
+    },
+    "diary_of_random": {
+      "name": "Diary of Random",
+      "description": "Intimate confessions from an unreliable narrator",
+      "prefixes": ["today i learned that", "nobody told me", "i keep thinking about", "strange how"],
+      "middles": ["the coffee knows my secrets", "pigeons have better plans", "monday tastes different now", "my shadow left early"],
+      "suffixes": ["write that down", "note to self", "remember this later", "forget i said anything"]
+    },
+    "bumper_starter": {
+      "name": "Bumper Sticker Wisdom",
+      "description": "Pseudo-profound advice for modern living",
+      "prefixes": ["life is too short for", "never trust a", "always remember:", "warning: may contain"],
+      "middles": ["expired dreams", "person who doesn't dance", "the universe is listening", "traces of actual effort"],
+      "suffixes": ["drive safely", "you've been warned", "ask your doctor", "side effects may vary"]
+    }
+  },
+  "corpus": {
+    "free_verse_fragments": [
+      "between the lines we never wrote",
+      "holding breath underwater",
+      "static on an old radio",
+      "footprints in wet cement",
+      "coffee rings as maps",
+      "elevator music for ghosts",
+      " Origami swans with broken wings",
+      "the sound of one hand scrolling"
+    ],
+    "idiom_adjacent": [
+      "when pigs learn to fly sideways",
+      "counting chickens before they hatch plans",
+      "the early bird gets confused",
+      "a watched pot never boils but simmers anxiously",
+      "barking up the wrong treehouse",
+      "letting cats out of bags carefully"
+    ]
+  },
+  "settings": {
+    "default_mode": "vague_monotone",
+    "max_sentences": 3,
+    "min_sentences": 1,
+    "allow_image_input": true,
+    "allow_text_input": true,
+    "enable_memory": true
+  }
+}
